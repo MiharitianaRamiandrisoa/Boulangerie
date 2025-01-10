@@ -1,0 +1,41 @@
+# NetBeans-specific files
+nbproject/private/
+nbproject/Makefile-*
+nbproject/Package-*.*
+
+# Java files
+*.class
+build/
+out/
+dist/
+
+# Maven
+target/
+
+# Gradle
+.gradle/
+build/
+
+# Logs
+*.log
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.orig
+*.rej
+
+# Libraries
+lib/
+
+# Deployment
+*.war
+*.ear
+*.jar
+*.keystore

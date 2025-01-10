@@ -1,0 +1,39 @@
+boulangerie
+    ingredient
+    produit
+    production
+
+
+    insertion:
+    recherche:
+
+
+-Vente
+-Stock
+
+
+Stock:
+    -ingredient
+    -Produit fini
+
+
+
+Ingredient en stock:
+    -CRUD
+    -Recherche simple
+    -Recherche multi-critère
+    -Recherche ingredients pour un produit
+
+
+Produit en stock:
+    -CRUD
+    -Recherche simple avec quantite
+    -Recherche multi-critère avec quantite
+
+
+
+Vente:
+    -insertion Vente
+    -total vente par mois
+    -total vente par produit par mois
+    
