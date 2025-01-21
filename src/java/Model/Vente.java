@@ -1,21 +1,24 @@
 package Model;
 
 import java.sql.*;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Vente {
-    private int idVente;
+     private int idVente;
     private Date date;
-
-    // Constructeur sans paramètres
-    public Vente() {
-    }
+    private int client;
 
     // Constructeur avec paramètres
-    public Vente(int idVente, Date date) {
+    public Vente(int idVente, Date date, int client) {
         this.idVente = idVente;
         this.date = date;
+        this.client = client;
+    }
+
+    public Vente() {
+
     }
 
     // Getters et Setters
@@ -35,17 +38,25 @@ public class Vente {
         this.date = date;
     }
 
+    public int getClient() {
+        return client;
+    }
+
+    public void setClient(int client) {
+        this.client = client;
+    }
     // Méthode d'insertion
-    public void insert(Connection connection, VenteDetail venteDetail) throws SQLException {
+     public void insert(Connection connection, VenteDetail venteDetail) throws SQLException {
         try {
             connection = (connection!= null) ? connection : new PGConnect().getConnection();
             // Début de transaction
             connection.setAutoCommit(false);
 
             // Insérer la vente
-            String query = "INSERT INTO Vente (_date) VALUES (?)";
+            String query = "INSERT INTO Vente (_date, idClient) VALUES (?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setDate(1, new java.sql.Date(this.date.getTime()));
+                statement.setInt(2, this.getClient());
                 statement.executeUpdate();
 
                 // Récupérer l'ID généré pour la vente
@@ -117,6 +128,39 @@ public class Vente {
         return ventes;
     }
 
+    
+     public static List<Vente> getClientByDateVente(Connection connection, Date d) {
+        if( d == null){
+         d= new Date(System.currentTimeMillis());
+        }
+        List<Vente> vente = new ArrayList<>();
+        connection = (connection != null) ? connection : new PGConnect().getConnection();
+        String query = "select * from Vente where _date = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            // Définir le paramètre idVente dans la requête
+            stmt.setDate(1, d);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    // Récupérer les détails de la vente
+                    int idVente = rs.getInt("idVente");
+                    Date date = rs.getDate("_date");
+                    int idClient = rs.getInt("idClient");
+
+                    Vente v = new Vente();
+                    v.setIdVente(idVente);
+                    v.setDate(date);
+                    v.setClient(idClient);
+                    // Ajouter le détail à la liste
+                    vente.add(v);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace(); // Log de l'erreur pour le débogage
+        }
+        return vente;
+    }
+    
     // Récupérer une vente par son ID
     public void getById(int idVente, Connection connection) throws SQLException {
         String query = "SELECT * FROM Vente WHERE idVente = ?";

@@ -1,10 +1,13 @@
 create database boulangerie;
 \c boulangerie;
 
+
 CREATE TABLE Vente(
    idVente SERIAL,
    _date DATE NOT NULL,
-   PRIMARY KEY(idVente)
+   idClient INTEGER,
+   PRIMARY KEY(idVente),
+   FOREIGN KEY(idClient) REFERENCES Client(idClient)
 );
 
 CREATE TABLE TypeProduit(
@@ -13,11 +16,13 @@ CREATE TABLE TypeProduit(
    PRIMARY KEY(idTypeProduit)
 );
 
+
 CREATE TABLE TypeMvt(
    idType SERIAL,
    libelle VARCHAR(50)  NOT NULL,
    PRIMARY KEY(idType)
 );
+
 
 CREATE TABLE Unite(
    IdUnite SERIAL,
@@ -80,6 +85,12 @@ CREATE TABLE IngredientMvt(
    FOREIGN KEY(idIngredient) REFERENCES Ingredient(idIngredient)
 );
 
+CREATE TABLE Client(
+   idClient SERIAL ,
+   nom VARCHAR,
+   PRIMARY KEY(idClient)
+);
+
 CREATE TABLE VenteDetail(
    idProduit INTEGER,
    idVente INTEGER,
@@ -97,6 +108,18 @@ CREATE TABLE Recette(
    FOREIGN KEY(idProduit) REFERENCES Produit(idProduit),
    FOREIGN KEY(idIngredient) REFERENCES Ingredient(idIngredient)
 );
+
+CREATE TABLE Conseil(
+   idConseil INTEGER,
+   idProduit INTEGER,
+   _date DATE,
+   FOREIGN KEY(idProduit) REFERENCES Produit(idProduit)
+);
+
+SELECT p.* , c.*
+FROM Produit p 
+JOIN Conseil c ON p.idProduit = c.idProduit 
+WHERE EXTRACT(MONTH FROM c._date) = 2 AND EXTRACT(YEAR FROM c._date) = 3924
 
 
 SELECT 

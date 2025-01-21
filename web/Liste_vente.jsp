@@ -5,6 +5,7 @@
 <%@ page import="Model.Produit" %>
 <%@ page import="Model.TypeProduit" %>
 <%@ page import="Model.Parfum" %>
+<%@ page import="Model.Client" %>
 
 <!DOCTYPE html>
 <html lang="en">

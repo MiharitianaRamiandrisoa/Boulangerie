@@ -2,6 +2,7 @@
 <%@ page import="java.util.List" %>
 <%@ page import="Model.TypeProduit" %>
 <%@ page import="Model.Produit" %>
+<%@ page import="Model.Client" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,6 +61,24 @@
                                     <div class="form-group">
                                         <label for="date">Date</label>
                                         <input type="date" class="form-control" name="date" placeholder="Date">
+                                    </div>
+                                        
+                                    <div class="form-group">
+                                        <label for="produit">Client</label>
+                                        <select class="form-control" name="client" id="client">
+                                        <% 
+                                            List<Client> client = (List<Client>) request.getAttribute("client");
+                                            if (client != null){
+                                                for (Client c : client) { 
+                                        %>
+                                            <option value="<%= c.getIdClient() %>"><%= c.getNomClientById(null,c.getIdClient())%></option>
+                                        <%
+                                                }
+                                            } else { 
+                                        %>
+                                            <option disabled>Aucun Client</option>
+                                        <% } %>
+                                        </select>
                                     </div>
 
                                     <button type="submit" class="btn btn-primary mr-2">Submit</button>
