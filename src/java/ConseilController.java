@@ -3,7 +3,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
+import Model.Ingredient;
 import Model.Produit;
+import Model.TypeProduit;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -26,8 +28,26 @@ public class ConseilController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    }
+        
+            
+        String nom = null;
+        Double prixMin = null;
+        Double prixMax = null;
+        Integer typeProduit = null;
+        Integer idIngredient = null;
+        
+        List<Produit> produits= new ArrayList<Produit> ();
+        
+        try {
+            produits = Produit.getProduitsFiltered(nom, prixMin, prixMax, typeProduit, idIngredient,null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
+        request.setAttribute("produits", produits);
+
+        request.getRequestDispatcher("Selection_conseil.jsp").forward(request, response);
+    }
     
  @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

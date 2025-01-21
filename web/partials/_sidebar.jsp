@@ -103,5 +103,12 @@
                 </ul>
             </div>
         </li>
+        
+        <li class="nav-item">
+            <a class="nav-link"  href="ConseilController" method="GET" >
+                <i class="fas fa-home menu-icon"></i>
+                <span class="menu-title">Ajout Produit Conseil</span>
+            </a>
+        </li>
     </ul>
 </nav>
