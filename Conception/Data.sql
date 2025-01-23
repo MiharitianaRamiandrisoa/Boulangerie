@@ -1,24 +1,15 @@
--- Ajouter des données dans la table Client
-INSERT INTO Client ( nom) VALUES
-( 'Client A'),
-( 'Client B'),
-( 'Client C'),
-( 'Client D'),
-( 'Client E');
-
--- Ajouter des données dans la table Vente avec les idClient associés
-INSERT INTO Vente (_date, idClient) VALUES
-('2025-01-01', 1),
-('2025-01-02', 2),
-('2025-01-03', 3),
-('2025-01-04', 4),
-('2025-01-05', 5),
-('2025-01-06', 1),
-('2025-01-07', 2),
-('2025-01-16', 3),
-('2025-01-16', 4),
-('2025-01-16', 5);
-
+-- Données pour Vente
+INSERT INTO Vente (_date) VALUES
+('2025-01-01'),
+('2025-01-02'),
+('2025-01-03'),
+('2025-01-04'),
+('2025-01-05'),
+('2025-01-06'),
+('2025-01-07'),
+('2025-01-08'),
+('2025-01-09'),
+('2025-01-10');
 
 -- Données pour TypeProduit
 INSERT INTO TypeProduit (nomType) VALUES
@@ -95,11 +86,11 @@ INSERT INTO Production (qtt, _date, idProduit) VALUES
 
 -- Données pour IngredientMvt
 INSERT INTO IngredientMvt (qtt, _date, idType, idIngredient) VALUES
-(50, '2025-01-16', 1, 1),
-(20, '2025-01-16', 1, 2),
-(15, '2025-01-16', 1, 3),
-(30, '2025-01-16', 1, 4),
-(10, '2025-01-16', 1, 5),
+(50, '2025-01-01', 1, 1),
+(20, '2025-01-01', 1, 2),
+(15, '2025-01-01', 1, 3),
+(30, '2025-01-01', 1, 4),
+(10, '2025-01-01', 1, 5),
 (5, '2025-01-01', 1, 6),
 (10, '2025-01-02', 2, 1),
 (5, '2025-01-02', 2, 2);

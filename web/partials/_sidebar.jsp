@@ -90,18 +90,5 @@
                 </ul>
             </div>
         </li>
-        
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#client" aria-expanded="false" aria-controls="ui-basic">
-                <i class="fas fa-cash-register menu-icon"></i>
-                <span class="menu-title">client</span>
-                <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="client">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="VenteClientController?action=venteClient">Liste client-vente</a></li>
-                </ul>
-            </div>
-        </li>
     </ul>
 </nav>

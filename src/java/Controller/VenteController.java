@@ -17,7 +17,6 @@ import Model.Produit;
 import Model.TypeProduit;
 import Model.Vente;
 import Model.VenteDetail;
-import Model.Client;
 
 import java.sql.Date;
 import java.util.List;
@@ -62,10 +61,7 @@ public class VenteController extends HttpServlet {
 
             } else {
                 List<Produit> produits = Produit.getAllProduits(null);
-                List<Client> clients = Client.getAllClient(null);
-                
                 request.setAttribute("produits", produits);
-                request.setAttribute("client", clients);
                 request.getRequestDispatcher("Insertion_vente.jsp").forward(request, response);
             }
 
@@ -84,11 +80,9 @@ public class VenteController extends HttpServlet {
             String produitId = request.getParameter("produit");
             String quantiteStr = request.getParameter("qttProduit");
             String dateStr = request.getParameter("date");
-            String idClient=  request.getParameter("client");
 
-            if (produitId != null && !produitId.isEmpty() && quantiteStr != null && !quantiteStr.isEmpty() && idClient != null && !idClient.isEmpty() ) {
+            if (produitId != null && !produitId.isEmpty() && quantiteStr != null && !quantiteStr.isEmpty()) {
                 int idProduit = Integer.parseInt(produitId);
-                int IdClient = Integer.parseInt(idClient);
                 Double quantite = Double.valueOf(quantiteStr);
                 Date date;
                 if (dateStr != null && !dateStr.isEmpty()) {
@@ -100,12 +94,10 @@ public class VenteController extends HttpServlet {
                 // Créer une instance de Vente et insérer dans la base de données
                 Vente vente = new Vente();
                 vente.setDate(date); // Date actuelle
-                vente.setClient(IdClient);
                 VenteDetail vd = new VenteDetail();
                 vd.setDate(date);
                 vd.setIdProduit(idProduit);
                 vd.setQtt(quantite);
-                
                 vente.insert(null,vd); // Insérer la vente dans la base de données
 
                 // Rediriger vers la liste des ventes après insertion
