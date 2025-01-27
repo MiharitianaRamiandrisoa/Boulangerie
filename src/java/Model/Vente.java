@@ -6,15 +6,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Vente {
-     private int idVente;
+    private int idVente;
     private Date date;
     private int client;
+    private int idvendeur;
 
     // Constructeur avec paramètres
-    public Vente(int idVente, Date date, int client) {
+    public Vente(int idVente, Date date, int client, int idvendeur) {
         this.idVente = idVente;
         this.date = date;
         this.client = client;
+        this.idvendeur = idvendeur;
     }
 
     public Vente() {
@@ -45,6 +47,14 @@ public class Vente {
     public void setClient(int client) {
         this.client = client;
     }
+    public int getIdvendeur() {
+        return idvendeur;
+    }
+
+    public void setIdvendeur(int idvendeur) {
+        this.idvendeur = idvendeur;
+    }
+
     // Méthode d'insertion
      public void insert(Connection connection, VenteDetail venteDetail) throws SQLException {
         try {
@@ -53,10 +63,11 @@ public class Vente {
             connection.setAutoCommit(false);
 
             // Insérer la vente
-            String query = "INSERT INTO Vente (_date, idClient) VALUES (?, ?)";
+            String query = "INSERT INTO Vente (_date, idClient, idVendeur) VALUES (?, ?, ? )";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setDate(1, new java.sql.Date(this.date.getTime()));
                 statement.setInt(2, this.getClient());
+                statement.setInt(3, this.getIdvendeur());
                 statement.executeUpdate();
 
                 // Récupérer l'ID généré pour la vente

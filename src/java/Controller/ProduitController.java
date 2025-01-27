@@ -27,6 +27,7 @@ public class ProduitController extends HttpServlet {
         try {
             if ("listProduits".equals(action)) {
                 // Récupérer les paramètres du formulaire de recherche
+                
                 String nom = request.getParameter("nom");
                 Double prixMin = null;
                 Double prixMax = null;

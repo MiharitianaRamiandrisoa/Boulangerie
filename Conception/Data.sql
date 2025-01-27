@@ -1,23 +1,34 @@
 -- Ajouter des données dans la table Client
-INSERT INTO Client ( nom) VALUES
-( 'Client A'),
-( 'Client B'),
-( 'Client C'),
-( 'Client D'),
-( 'Client E');
+INSERT INTO Client (nom) VALUES
+('Jean Martin'),
+('Claire Dubois'),
+('Alex Lefevre'),
+('Sophie Bernard');
 
--- Ajouter des données dans la table Vente avec les idClient associés
-INSERT INTO Vente (_date, idClient) VALUES
-('2025-01-01', 1),
-('2025-01-02', 2),
-('2025-01-03', 3),
-('2025-01-04', 4),
-('2025-01-05', 5),
-('2025-01-06', 1),
-('2025-01-07', 2),
-('2025-01-16', 3),
-('2025-01-16', 4),
-('2025-01-16', 5);
+
+INSERT INTO Genre(genre) VALUES
+('masculin'),
+('femminin');
+
+INSERT INTO Vendeur (nom, idGenre) VALUES
+('Lucien Durand', 1),
+('Marie Lopez', 2),
+('Alex Morel', 1);
+
+
+
+-- Insertion des données dans la table Vente avec idVendeur
+INSERT INTO Vente (_date, idClient, idVendeur) VALUES
+('2025-01-01', 1, 1),
+('2025-01-02', 2, 2),
+('2025-01-03', 3, 3),
+('2025-01-04', 4, 1),
+('2025-01-05', 1, 2),
+('2025-01-06', 1, 3),
+('2025-01-07', 2, 2),
+('2025-01-16', 3, 3),
+('2025-01-16', 4, 1),
+('2025-01-16', 2, 2);
 
 
 -- Données pour TypeProduit
@@ -127,3 +138,10 @@ INSERT INTO Recette (idProduit, idIngredient, qtt) VALUES
 (4, 5, 0.05),
 (5, 6, 0.1),
 (6, 3, 0.5);
+
+
+-- Table Commission
+INSERT INTO Commission (_date, montant) VALUES
+('2025-01-01',5 ),
+('2025-01-15',10 ),
+('2025-02-01',20 );

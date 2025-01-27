@@ -17,8 +17,9 @@ import Model.Produit;
 import Model.TypeProduit;
 import Model.Vente;
 import Model.VenteDetail;
-import Model.Client;
 
+import Model.Vendeur;
+import Model.Client;
 import java.sql.Date;
 import java.util.List;
 
@@ -51,7 +52,9 @@ public class VenteController extends HttpServlet {
                 List<VenteDetail> vente = Vente.getFilteredVentes(null, parfum, typeProduit);
                 List<TypeProduit> typesProduit = TypeProduit.getAllType(null);
                 List<Parfum> parfums = Parfum.getAll(null);
+                List<Vendeur> v = Vendeur.getAllVendeur(null);
 
+                request.setAttribute("vendeur", v);
                 // Ajouter les données au modèle
                 request.setAttribute("parfum", parfums);
                 request.setAttribute("vente", vente);
@@ -61,6 +64,9 @@ public class VenteController extends HttpServlet {
                 request.getRequestDispatcher("Liste_vente.jsp").forward(request, response);
 
             } else {
+                List<Vendeur> v = Vendeur.getAllVendeur(null);
+
+                request.setAttribute("vendeur", v);
                 List<Produit> produits = Produit.getAllProduits(null);
                 List<Client> clients = Client.getAllClient(null);
                 
@@ -80,16 +86,23 @@ public class VenteController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            
+            List<Vendeur> v = Vendeur.getAllVendeur(null);
+
+            request.setAttribute("vendeur", v);
             // Récupération des paramètres du formulaire
             String produitId = request.getParameter("produit");
             String quantiteStr = request.getParameter("qttProduit");
             String dateStr = request.getParameter("date");
             String idClient=  request.getParameter("client");
+            String idVendeurStr=  request.getParameter("vendeur");
 
-            if (produitId != null && !produitId.isEmpty() && quantiteStr != null && !quantiteStr.isEmpty() && idClient != null && !idClient.isEmpty() ) {
+            if (idVendeurStr != null && !idVendeurStr.isEmpty()&& produitId != null && !produitId.isEmpty() && quantiteStr != null && !quantiteStr.isEmpty() && idClient != null && !idClient.isEmpty() ) {
                 int idProduit = Integer.parseInt(produitId);
                 int IdClient = Integer.parseInt(idClient);
                 Double quantite = Double.valueOf(quantiteStr);
+                int idVendeur = Integer.parseInt(idVendeurStr);
+                
                 Date date;
                 if (dateStr != null && !dateStr.isEmpty()) {
                     date = java.sql.Date.valueOf(dateStr); // Conversion de la date string en SQL Date
@@ -101,6 +114,7 @@ public class VenteController extends HttpServlet {
                 Vente vente = new Vente();
                 vente.setDate(date); // Date actuelle
                 vente.setClient(IdClient);
+                vente.setIdvendeur(idVendeur);
                 VenteDetail vd = new VenteDetail();
                 vd.setDate(date);
                 vd.setIdProduit(idProduit);

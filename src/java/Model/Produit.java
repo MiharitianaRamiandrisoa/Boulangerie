@@ -319,7 +319,6 @@ public class Produit {
                         }
                     }
                 }
-
                 produits.add(new Produit(idProduit, nomProduit, idTypeProduit, prix));
             }
         }

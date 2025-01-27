@@ -110,5 +110,11 @@
                 <span class="menu-title">Ajout Produit Conseil</span>
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link"  href="VendeurController" method="GET" >
+                <i class="fas fa-home menu-icon"></i>
+                <span class="menu-title">Commission vendeur</span>
+            </a>
+        </li>
     </ul>
 </nav>
