@@ -9,11 +9,9 @@ public class Produit {
     private String nomProduit;
     private int idTypeProduit;
     private Double prix; // Ajouter un attribut prix
-//    List<Ingredient> ingredient;
+    // List<Ingredient> ingredient;
     private int idParfum;
 
-   
-    
     // Constructeur vide
     public Produit() {
     }
@@ -26,14 +24,14 @@ public class Produit {
         this.prix = prix;
     }
 
-    public Produit(String nomProduit, int idTypeProduit, Double prix , int idParfum) {
+    public Produit(String nomProduit, int idTypeProduit, Double prix, int idParfum) {
         this.nomProduit = nomProduit;
         this.idTypeProduit = idTypeProduit;
         this.prix = prix;
         this.idParfum = idParfum;
     }
 
-     public int getIdParfum() {
+    public int getIdParfum() {
         return idParfum;
     }
 
@@ -73,6 +71,87 @@ public class Produit {
     public void setPrix(Double prix) {
         this.prix = prix;
     }
+
+    public static List<Produit> getConseil(int mois, int annee, Connection connection) throws Exception {
+        connection = (connection != null) ? connection : new PGConnect().getConnection();
+
+        Date d = new Date(annee, mois, 1);
+         List<Produit> produits = new ArrayList<>();
+    String query = "SELECT p.* " +
+                   "FROM Produit p  " +
+                   "JOIN Conseil c ON p.idProduit = c.idProduit " +
+                   "WHERE EXTRACT(YEAR FROM c._date) = ?";
+        if (mois != -1) {
+            query +=  " and EXTRACT(MONTH FROM c._date) = ?";
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            if(mois!= -1){
+                stmt.setInt(1, annee);
+                stmt.setInt(2, mois);  
+            }else{
+                stmt.setInt(1, annee);
+            }
+        
+            
+                ResultSet resultSet = stmt.executeQuery();
+            
+            while (resultSet.next()) {
+                int idProduit = resultSet.getInt("idProduit");
+                String nomProduit = resultSet.getString("nomProduit");
+                int idTypeProduit = resultSet.getInt("idTypeProduit");
+
+                // Récupérer le prix le plus récent du produit
+                Double prix = null;
+                String queryPrix = "SELECT prix FROM PrixProduit WHERE idProduit = ? ORDER BY _date DESC LIMIT 1";
+                try (PreparedStatement stmtPrix = connection.prepareStatement(queryPrix)) {
+                    stmtPrix.setInt(1, idProduit);
+                    try (ResultSet resultSetPrix = stmtPrix.executeQuery()) {
+                        if (resultSetPrix.next()) {
+                            prix = resultSetPrix.getDouble("prix");
+                        }
+                    }
+                }
+
+                produits.add(new Produit(idProduit, nomProduit, idTypeProduit, prix));
+            }
+        }
+        return produits;
+    }
+
+    public static void insertConseil(int idProduit, int mois, int annee, Connection connection) throws SQLException {
+        connection = (connection != null) ? connection : new PGConnect().getConnection();
+
+        // Construire une chaîne de date au format 'YYYY-MM-DD'
+        String dateStr = String.format("%04d-%02d-01", annee, mois); // Jour fixé à 1
+        java.sql.Date date = java.sql.Date.valueOf(dateStr);
+
+        // Vérifier si le produit conseil existe déjà pour ce mois et cette année
+        String checkSql = "SELECT COUNT(*) FROM Conseil WHERE idProduit = ? AND _date = ?";
+        try (PreparedStatement checkStmt = connection.prepareStatement(checkSql)) {
+            checkStmt.setInt(1, idProduit);
+            checkStmt.setDate(2, date);
+
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next() && rs.getInt(1) > 0) {
+                    // Le produit conseil existe déjà pour ce mois et cette année
+                    System.out.println("Le produit conseil est déjà inséré pour ce mois et cette année.");
+                    return;
+                }
+            }
+        }
+
+        // Insérer le nouveau produit conseil
+        String insertSql = "INSERT INTO Conseil (idProduit, _date) VALUES (?, ?)";
+        try (PreparedStatement insertStmt = connection.prepareStatement(insertSql)) {
+            insertStmt.setInt(1, idProduit);
+            insertStmt.setDate(2, date);
+
+            // Exécuter l'insertion
+            insertStmt.executeUpdate();
+        }
+    }
+
 
     public void insert(Connection connection) throws SQLException {
         connection = (connection != null) ? connection : new PGConnect().getConnection();
@@ -136,7 +215,7 @@ public class Produit {
             // Exécuter la requête
             try (ResultSet resultSet = stmt.executeQuery()) {
                 // Parcourir les résultats et créer des objets Ingredient
-                while (resultSet.next()){
+                while (resultSet.next()) {
                     int idIngredient = resultSet.getInt("idIngredient");
                     String nomIngredient = resultSet.getString("nomIngredient");
                     int quantite = resultSet.getInt("qtt");
@@ -326,5 +405,4 @@ public class Produit {
         return produits;
     }
 
-    
 }

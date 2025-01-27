@@ -5,6 +5,7 @@
 package Model;
 
 import java.sql.*;
+
 /**
  *
  * @author MIHARY
@@ -13,16 +14,15 @@ import java.sql.*;
 public class PGConnect {
 
     Connection c;
-    
-    public PGConnect(){
+
+    public PGConnect() {
         try {
             Class.forName("org.postgresql.Driver");
-            this.c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/boulangerie","postgres","pass");
-        }catch (ClassNotFoundException | SQLException   e){
+            this.c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/boulangerie", "postgres", "pass");
+        } catch (ClassNotFoundException | SQLException e) {
             System.out.println(e);
         }
     }
-
 
     public Connection getConnection() {
         return c;
