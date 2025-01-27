@@ -7,9 +7,21 @@ import java.util.List;
 public class Vente {
     private int idVente;
     private Date date;
+<<<<<<< Updated upstream
 
     // Constructeur sans paramètres
     public Vente() {
+=======
+    private int client;
+    private int idvendeur;
+
+    // Constructeur avec paramètres
+    public Vente(int idVente, Date date, int client, int idvendeur) {
+        this.idVente = idVente;
+        this.date = date;
+        this.client = client;
+        this.idvendeur = idvendeur;
+>>>>>>> Stashed changes
     }
 
     // Constructeur avec paramètres
@@ -35,6 +47,24 @@ public class Vente {
         this.date = date;
     }
 
+<<<<<<< Updated upstream
+=======
+    public int getClient() {
+        return client;
+    }
+
+    public void setClient(int client) {
+        this.client = client;
+    }
+    public int getIdvendeur() {
+        return idvendeur;
+    }
+
+    public void setIdvendeur(int idvendeur) {
+        this.idvendeur = idvendeur;
+    }
+
+>>>>>>> Stashed changes
     // Méthode d'insertion
     public void insert(Connection connection, VenteDetail venteDetail) throws SQLException {
         try {
@@ -43,9 +73,17 @@ public class Vente {
             connection.setAutoCommit(false);
 
             // Insérer la vente
+<<<<<<< Updated upstream
             String query = "INSERT INTO Vente (_date) VALUES (?)";
             try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setDate(1, new java.sql.Date(this.date.getTime()));
+=======
+            String query = "INSERT INTO Vente (_date, idClient, idVendeur) VALUES (?, ?, ? )";
+            try (PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                statement.setDate(1, new java.sql.Date(this.date.getTime()));
+                statement.setInt(2, this.getClient());
+                statement.setInt(3, this.getIdvendeur());
+>>>>>>> Stashed changes
                 statement.executeUpdate();
 
                 // Récupérer l'ID généré pour la vente

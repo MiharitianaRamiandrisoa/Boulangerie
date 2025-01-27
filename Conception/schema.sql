@@ -1,11 +1,14 @@
 create database boulangerie;
 \c boulangerie;
 
+<<<<<<< Updated upstream
 CREATE TABLE Vente(
    idVente SERIAL,
    _date DATE NOT NULL,
    PRIMARY KEY(idVente)
 );
+=======
+>>>>>>> Stashed changes
 
 CREATE TABLE TypeProduit(
    idTypeProduit SERIAL,
@@ -26,10 +29,31 @@ CREATE TABLE Unite(
    PRIMARY KEY(IdUnite)
 );
 
+
 CREATE TABLE Parfum(
    idParfum SERIAL,
    nom VARCHAR(50)  NOT NULL,
    PRIMARY KEY(idParfum)
+);
+
+
+CREATE TABLE Genre(
+   idGenre SERIAL,
+   genre VARCHAR(50)  NOT NULL,
+   PRIMARY KEY(idGenre)
+);
+
+CREATE TABLE Client(
+   idClient SERIAL,
+   nom VARCHAR(50)  NOT NULL,
+   PRIMARY KEY(idClient)
+);
+
+CREATE TABLE Commission(
+   idCommission SERIAL,
+   _date DATE NOT NULL,
+   montant NUMERIC(15,2)   NOT NULL,
+   PRIMARY KEY(idCommission)
 );
 
 CREATE TABLE Produit(
@@ -62,7 +86,7 @@ CREATE TABLE PrixProduit(
 
 CREATE TABLE Production(
    idProduction SERIAL,
-   qtt NUMERIC(15,2)   NOT NULL,
+   qtt INTEGER NOT NULL,
    _date DATE NOT NULL,
    idProduit INTEGER NOT NULL,
    PRIMARY KEY(idProduction),
@@ -71,7 +95,7 @@ CREATE TABLE Production(
 
 CREATE TABLE IngredientMvt(
    idMvt SERIAL,
-   qtt NUMERIC(15,2)   NOT NULL,
+   qtt INTEGER NOT NULL,
    _date DATE NOT NULL,
    idType INTEGER NOT NULL,
    idIngredient INTEGER NOT NULL,
@@ -80,10 +104,40 @@ CREATE TABLE IngredientMvt(
    FOREIGN KEY(idIngredient) REFERENCES Ingredient(idIngredient)
 );
 
+<<<<<<< Updated upstream
+=======
+CREATE TABLE Conseil(
+   idConseil SERIAL,
+   _date DATE NOT NULL,
+   idProduit INTEGER NOT NULL,
+   PRIMARY KEY(idConseil),
+   UNIQUE(idProduit),
+   FOREIGN KEY(idProduit) REFERENCES Produit(idProduit)
+);
+
+CREATE TABLE Vendeur(
+   idVendeur SERIAL,
+   nom VARCHAR(50)  NOT NULL,
+   idGenre INTEGER NOT NULL,
+   PRIMARY KEY(idVendeur),
+   FOREIGN KEY(idGenre) REFERENCES Genre(idGenre)
+);
+
+CREATE TABLE Vente(
+   idVente SERIAL,
+   _date DATE NOT NULL,
+   idVendeur INTEGER NOT NULL,
+   idClient INTEGER NOT NULL,
+   PRIMARY KEY(idVente),
+   FOREIGN KEY(idVendeur) REFERENCES Vendeur(idVendeur),
+   FOREIGN KEY(idClient) REFERENCES Client(idClient)
+);
+
+>>>>>>> Stashed changes
 CREATE TABLE VenteDetail(
    idProduit INTEGER,
    idVente INTEGER,
-   qtt NUMERIC(15,2)   NOT NULL,
+   qtt INTEGER NOT NULL,
    PRIMARY KEY(idProduit, idVente),
    FOREIGN KEY(idProduit) REFERENCES Produit(idProduit),
    FOREIGN KEY(idVente) REFERENCES Vente(idVente)
@@ -98,50 +152,50 @@ CREATE TABLE Recette(
    FOREIGN KEY(idIngredient) REFERENCES Ingredient(idIngredient)
 );
 
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
 SELECT 
-   SUM(CASE 
-         WHEN idType = 1 THEN qtt -- Entrée de stock
-         WHEN idType = 2 THEN -qtt -- Sortie de stock
-         ELSE 0 
-   END) AS stockDisponible
-FROM IngredientMvt
-WHERE idIngredient = 1;
+    g.genre AS GenreVendeur,
+    SUM(
+        CASE 
+            WHEN total_ventes.totalVente >= 7
+            THEN total_ventes.totalVente * (SELECT montant FROM commission ORDER BY _date DESC LIMIT 1) / 100
+            ELSE 0 
+        END
+    ) AS sommeCommission
+FROM ventedetail vd
+JOIN prixproduit pp ON vd.idproduit = pp.idproduit
+JOIN vente v ON vd.idvente = v.idvente
+JOIN (
+    SELECT 
+        vd.idvente,
+        SUM(pp.prix * vd.qtt) AS totalVente
+    FROM ventedetail vd
+    JOIN prixproduit pp ON vd.idproduit = pp.idproduit
+    GROUP BY vd.idvente
+) AS total_ventes ON vd.idvente = total_ventes.idvente
+JOIN vendeur ve ON v.idvendeur = ve.idvendeur
+JOIN genre g ON ve.idGenre = g.idGenre
+GROUP BY g.genre;
 
 
+WITH VenteCommission AS (
+    SELECT 
+        g.genre AS GenreVendeur,
+        SUM(pp.prix * vd.qtt) AS totalVente,
+        (SELECT montant FROM commission ORDER BY _date DESC LIMIT 1) AS pourcentageCommission
+    FROM ventedetail vd
+    JOIN prixproduit pp ON vd.idproduit = pp.idproduit
+    JOIN vente v ON vd.idvente = v.idvente
+    JOIN vendeur ve ON v.idvendeur = ve.idvendeur
+    JOIN genre g ON ve.idGenre = g.idGenre
+    GROUP BY g.genre
+)
 SELECT 
-    idIngredient,
-    SUM(CASE 
-        WHEN idType = 1 THEN qtt -- Entrée de stock
-        WHEN idType = 2 THEN -qtt -- Sortie de stock
-        ELSE 0 
-    END) AS stockDisponible
-FROM IngredientMvt
-GROUP BY idIngredient;
-
-
-
-select v.idvente , p.idproduit produit , v._date , idparfum parfum ,idtypeproduit type ,qtt 
-from ventedetail vd join produit p on vd.idproduit= p.idproduit
-join vente v on vd.idvente= v.idvente where idParfum = 1  ;
-
-SELECT v.idVente, p.idProduit produit, v._date, idParfum parfum, idTypeProduit type, qtt 
-FROM VenteDetail vd
-JOIN Produit p ON vd.idProduit = p.idProduit
-join vente v on vd.idvente = v.idvente
-WHERE 1=1
-and idparfum=1
-
-
--- prix total des vente d'un produit entre 2 dates
-SELECT SUM(vd.qtt * pp.prix) AS prixTotal
-FROM VenteDetail vd
-JOIN Produit p ON vd.idProduit = p.idProduit
-JOIN PrixProduit pp ON p.idProduit = pp.idProduit
-JOIN Vente v ON vd.idVente = v.idVente
-WHERE pp._date <= v._date
-and vd.idProduit = 1  -- Remplacez par l'id du produit que vous souhaitez tester
-AND pp._date <= v._date  -- Prendre le prix valide au moment de la vente
-AND v._date >= '2025-01-01'  -- Remplacez par la date de début de la plage
-AND v._date <= '2025-12-31'  -- Remplacez par la date de fin de la plage
-GROUP BY vd.idProduit;
+    GenreVendeur,
+    SUM(totalVente * pourcentageCommission / 100) AS sommeCommission
+FROM VenteCommission
+GROUP BY GenreVendeur;
