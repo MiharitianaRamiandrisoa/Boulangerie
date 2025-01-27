@@ -48,6 +48,7 @@ public class ProduitController extends HttpServlet {
                         idIngredient = Integer.valueOf(request.getParameter("ingredient"));
                     }
                 } catch (NumberFormatException e) {
+                    // Log the error if necessary
                 }
 
                 // Récupérer les produits filtrés
@@ -63,42 +64,30 @@ public class ProduitController extends HttpServlet {
                 request.setAttribute("ingredient", ing);
 
                 request.getRequestDispatcher("Liste_produit.jsp").forward(request, response);
-//               request.getRequestDispatcher("Selection_conseil.jsp").forward(request, response);
-                
-            }else if ("viewConseilMois".equals(action)){
-                // Ajouter la logique pour récupérer les produits du conseil du mois
-                String moisParam = request.getParameter("mois");
-                String anneeParam = request.getParameter("annee");
-                // Initialiser les valeurs par défaut si les paramètres sont manquants ou invalides
-                int mois = (moisParam != null && !moisParam.isEmpty()) ? Integer.parseInt(moisParam) : -1;
-                int annee = (anneeParam != null && !anneeParam.isEmpty()) ? Integer.parseInt(anneeParam) : 2025 ;
 
-                System.out.println(mois);
-                System.out.println(annee);
-                List<Produit> conseils = new Produit().getConseil(mois, annee,  null);
-                System.out.println(mois);
-                System.out.println(annee);
-                request.setAttribute("produits", conseils);
-                request.getRequestDispatcher("Liste_produit.jsp").forward(request, response);
-            }
-            else if ("getIngrédients".equals(action)) {
+            } else if ("getIngrédients".equals(action)) {
+                System.out.println("ee oo");
                 int produitId = Integer.parseInt(request.getParameter("produitId"));
                 List<Ingredient> ingredients = Produit.getIngredientsByProduit(null, produitId);
+                if (ingredients == null || ingredients.isEmpty()) {
+                    System.out.println("Aucun ingrédient trouvé pour le produit avec ID " + produitId);
+                } else {
+                    System.out.println("Ingrédients trouvés : " + ingredients.size());
+                }
+                request.setAttribute("ingredients", ingredients);
 
                 StringBuilder html = new StringBuilder();
-                if (ingredients != null && !ingredients.isEmpty()) {
+                 
+                if(ingredients.size()>0){
                     for (Ingredient ingredient : ingredients) {
-                        html.append("<li>").append(ingredient.getNomIngredient()).append("</li>");
+                       html.append("<li>").append(ingredient.getNomIngredient()).append("</li>");
                     }
-                } else {
-                    html.append("Aucun ingrédient pour ce produit.");
+                }else{
+                    html.append( "Aucun Ingredient pour ce produit" );
                 }
-
-                response.setContentType("text/html");
-                response.getWriter().write(html.toString());
-                return; // Arrêtez l'exécution pour éviter d'autres actions
+                 
+                 response.getWriter().write(html.toString());
             }
-
 
             else {
                 List<TypeProduit> typesProduit = TypeProduit.getAllType(null);
@@ -120,46 +109,14 @@ public class ProduitController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-                  String action = request.getParameter("action");
-            if ("addConseilMois".equals(action)) {
-                Integer produitId = Integer.parseInt(request.getParameter("produitId"));
+            String nomProduit = request.getParameter("nomProduit");
+            int idTypeProduit = Integer.parseInt(request.getParameter("idTypeProduit"));
+            Double prix = Double.valueOf(request.getParameter("prix"));
+            int idParfum= Integer.parseInt(request.getParameter("parfum"));
 
-                if (produitId != null) {
-                    // Récupérer les paramètres mois et année depuis la requête
-                    String moisParam = request.getParameter("mois");
-                    String anneeParam = request.getParameter("annee");
-
-                    // Initialiser les valeurs avec validation
-                    int mois = (moisParam != null && !moisParam.isEmpty()) ? Integer.parseInt(moisParam) : 1;
-                    int annee = (anneeParam != null && !anneeParam.isEmpty()) ? Integer.parseInt(anneeParam) : 2025;
-
-                    // Vérification des limites pour le mois (1 à 12)
-                    if (mois < 1 || mois > 12) {
-                        request.setAttribute("error", "Le mois doit être compris entre 1 et 12 !");
-                        request.getRequestDispatcher("ProduitController?action=listProduits").forward(request, response);
-                        return;
-                    }
-                    System.out.println(mois);
-                    System.out.println(annee);
-                    Produit.insertConseil(produitId, mois, annee, null);
-                    request.setAttribute("message", "Produit ajouté au Conseil du Mois avec succès !");
-                } else {
-                    request.setAttribute("error", "Produit introuvable !");
-                }
-
-                // Envoyer vers la liste des produits
-                request.getRequestDispatcher("ProduitController?action=listProduits").forward(request, response);
-                return;
-            }else{
-                String nomProduit = request.getParameter("nomProduit");
-                int idTypeProduit = Integer.parseInt(request.getParameter("idTypeProduit"));
-                Double prix = Double.valueOf(request.getParameter("prix"));
-                int idParfum= Integer.parseInt(request.getParameter("parfum"));
-
-                Produit produit = new Produit(nomProduit, idTypeProduit, prix,idParfum);
-                produit.insert(null);
-                response.sendRedirect("ProduitController?action=listProduits");
-            }
+            Produit produit = new Produit(nomProduit, idTypeProduit, prix,idParfum);
+            produit.insert(null);
+            response.sendRedirect("ProduitController?action=listProduits");
 
         } catch (IOException | NumberFormatException | SQLException e) {
             request.setAttribute("errorMessage", "Erreur : " + e.getMessage());
