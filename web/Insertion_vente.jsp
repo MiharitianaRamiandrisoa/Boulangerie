@@ -2,6 +2,11 @@
 <%@ page import="java.util.List" %>
 <%@ page import="Model.TypeProduit" %>
 <%@ page import="Model.Produit" %>
+<<<<<<< Updated upstream
+=======
+<%@ page import="Model.Client" %>
+<%@ page import="Model.Vendeur" %>
+>>>>>>> Stashed changes
 
 <!DOCTYPE html>
 <html lang="en">
@@ -48,6 +53,23 @@
                                             } else { 
                                         %>
                                             <option disabled>Aucun produit disponible</option>
+                                        <% } %>
+                                        </select>
+                                    </div>
+                                        <div class="form-group">
+                                        <label for="vendeur">Vendeur</label>
+                                        <select class="form-control" name="vendeur">
+                                        <% 
+                                            List<Vendeur> vendeur = (List<Vendeur>) request.getAttribute("vendeur");
+                                            if (vendeur != null) {
+                                                for (Vendeur v : vendeur) { 
+                                        %>
+                                            <option value="<%= v.getIdVendeur() %>"><%=Vendeur.getNomVendeurById( null, v.getIdVendeur()) %></option>
+                                        <%
+                                                }
+                                            } else { 
+                                        %>
+                                            <option disabled></option>
                                         <% } %>
                                         </select>
                                     </div>
