@@ -116,5 +116,21 @@
                 <span class="menu-title">Commission vendeur</span>
             </a>
         </li>
+        
+        
+        <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#prixProduit" aria-expanded="false" aria-controls="ui-basic">
+                <i class="fas fa-cash-register menu-icon"></i>
+                <span class="menu-title">Prix produit</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="prixProduit">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="PrixProduitController?action=listePrix">Liste prix</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="PrixProduitController">Insertion prix</a></li>
+                </ul>
+            </div>
+        </li>
+        
     </ul>
 </nav>
