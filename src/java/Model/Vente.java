@@ -47,6 +47,7 @@ public class Vente {
     public void setClient(int client) {
         this.client = client;
     }
+
     public int getIdvendeur() {
         return idvendeur;
     }
@@ -56,9 +57,9 @@ public class Vente {
     }
 
     // Méthode d'insertion
-     public void insert(Connection connection, VenteDetail venteDetail) throws SQLException {
+    public void insert(Connection connection, VenteDetail venteDetail) throws SQLException {
         try {
-            connection = (connection!= null) ? connection : new PGConnect().getConnection();
+            connection = (connection != null) ? connection : new PGConnect().getConnection();
             // Début de transaction
             connection.setAutoCommit(false);
 
@@ -95,19 +96,14 @@ public class Vente {
             throws SQLException {
         List<VenteDetail> ventes = new ArrayList<>();
 
-        StringBuilder query = new StringBuilder(
-                "SELECT v.idVente, p.idProduit produit, v._date, idParfum parfum, idTypeProduit type, qtt " +
-                        "FROM VenteDetail vd " +
-                        "JOIN Produit p ON vd.idProduit = p.idProduit " +
-                        "join vente v on vd.idvente = v.idvente " +
-                        "WHERE 1=1 ");
+        StringBuilder query = new StringBuilder( "select * from prixProduitVente where 1=1 ");
 
         // Ajout des filtres si spécifiés
         if (parfum != null) {
-            query.append("AND idParfum = ? ");
+            query.append("AND prixProduitVente.parfum = ? ");
         }
         if (type != null) {
-            query.append("AND idTypeProduit = ? ");
+            query.append("AND prixProduitVente.idTypeProduit = ? ");
         }
 
         connection = (connection != null) ? connection : new PGConnect().getConnection();
@@ -131,6 +127,7 @@ public class Vente {
                     vente.setIdType(rs.getInt("type"));
                     vente.setDate(rs.getDate("_date"));
                     vente.setQtt(rs.getDouble("qtt"));
+                    vente.setPrix(rs.getDouble("prix"));
                     ventes.add(vente);
                 }
             }
@@ -139,10 +136,9 @@ public class Vente {
         return ventes;
     }
 
-    
-     public static List<Vente> getClientByDateVente(Connection connection, Date d) {
-        if( d == null){
-         d= new Date(System.currentTimeMillis());
+    public static List<Vente> getClientByDateVente(Connection connection, Date d) {
+        if (d == null) {
+            d = new Date(System.currentTimeMillis());
         }
         List<Vente> vente = new ArrayList<>();
         connection = (connection != null) ? connection : new PGConnect().getConnection();
@@ -171,7 +167,7 @@ public class Vente {
         }
         return vente;
     }
-    
+
     // Récupérer une vente par son ID
     public void getById(int idVente, Connection connection) throws SQLException {
         String query = "SELECT * FROM Vente WHERE idVente = ?";

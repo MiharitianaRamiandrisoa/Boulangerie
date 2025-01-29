@@ -127,7 +127,7 @@ INSERT INTO VenteDetail (idProduit, idVente, qtt) VALUES
 (8, 4, 1),
 (1, 5, 10),
 (3, 5, 6);
-
+    
 -- Données pour Recette
 INSERT INTO Recette (idProduit, idIngredient, qtt) VALUES
 (1, 1, 0.5),

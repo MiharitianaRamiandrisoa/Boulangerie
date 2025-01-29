@@ -144,46 +144,54 @@ CREATE TABLE Recette(
 );
 
 
+-- vue pour recupere le prix des produit a la date de la vente
+create or replace view prixProduitVente as
+SELECT v.idVente, p.idProduit produit, p.idTypeProduit, v._date, idParfum parfum, idTypeProduit type, qtt , 
+    (
+        select prix  
+        from prixproduit 
+        where prixproduit._date <= v._date 
+            and prixproduit.idProduit = vd.idProduit
+        ORDER BY prixproduit._date DESC
+        LIMIT 1
+    ) 
+FROM VenteDetail vd 
+JOIN Produit p 
+    ON vd.idProduit = p.idProduit 
+join vente v 
+    on vd.idvente = v.idvente;
 
-SELECT 
+
+
+
+-- requette pour recupere la somme des commission 
+-- table commission a la date de la vente
+SELECT
     g.genre AS GenreVendeur,
     SUM(
-        CASE 
-            WHEN total_ventes.totalVente >= 7
-            THEN total_ventes.totalVente * (SELECT montant FROM commission ORDER BY _date DESC LIMIT 1) / 100
-            ELSE 0 
+        CASE
+            WHEN total_ventes.totalVente >= 1
+            THEN total_ventes.totalVente * (
+                SELECT c.montant 
+                FROM Commission c 
+                WHERE c._date <= total_ventes.dateVente 
+                ORDER BY c._date DESC 
+                LIMIT 1
+            ) / 100
+            ELSE 0
         END
     ) AS sommeCommission
-FROM ventedetail vd
-JOIN prixproduit pp ON vd.idproduit = pp.idproduit
-JOIN vente v ON vd.idvente = v.idvente
+FROM Vente v
 JOIN (
-    SELECT 
-        vd.idvente,
-        SUM(pp.prix * vd.qtt) AS totalVente
-    FROM ventedetail vd
-    JOIN prixproduit pp ON vd.idproduit = pp.idproduit
-    GROUP BY vd.idvente
-) AS total_ventes ON vd.idvente = total_ventes.idvente
-JOIN vendeur ve ON v.idvendeur = ve.idvendeur
-JOIN genre g ON ve.idGenre = g.idGenre
+    SELECT
+        pv.idVente,
+        SUM(pv.prix * pv.qtt) AS totalVente,
+        MAX(pv._date) AS dateVente  -- Récupère la date de la vente pour la commission
+    FROM prixProduitVente pv
+    GROUP BY pv.idVente
+) AS total_ventes ON v.idVente = total_ventes.idVente
+JOIN Vendeur ve ON v.idVendeur = ve.idVendeur
+JOIN Genre g ON ve.idGenre = g.idGenre
+WHERE EXTRACT(MONTH FROM v._date) = 01
+AND EXTRACT(YEAR FROM v._date) = 2025
 GROUP BY g.genre;
-
-
-WITH VenteCommission AS (
-    SELECT 
-        g.genre AS GenreVendeur,
-        SUM(pp.prix * vd.qtt) AS totalVente,
-        (SELECT montant FROM commission ORDER BY _date DESC LIMIT 1) AS pourcentageCommission
-    FROM ventedetail vd
-    JOIN prixproduit pp ON vd.idproduit = pp.idproduit
-    JOIN vente v ON vd.idvente = v.idvente
-    JOIN vendeur ve ON v.idvendeur = ve.idvendeur
-    JOIN genre g ON ve.idGenre = g.idGenre
-    GROUP BY g.genre
-)
-SELECT 
-    GenreVendeur,
-    SUM(totalVente * pourcentageCommission / 100) AS sommeCommission
-FROM VenteCommission
-GROUP BY GenreVendeur;

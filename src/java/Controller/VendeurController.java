@@ -35,7 +35,7 @@ public class VendeurController extends HttpServlet {
 
         int mois = (moisString != null && !moisString.equals("")) ? Integer.parseInt(moisString) : 1;
         int annee = (anneeString != null && !anneeString.equals("")) ? Integer.parseInt(anneeString) : 2025;
-        double seuilVente = (seuilVenteString != null && !seuilVenteString.equals("")) ? Double.parseDouble(seuilVenteString) : 7.0;  // Valeur par défaut 7.0
+        double seuilVente = (seuilVenteString != null && !seuilVenteString.equals("")) ? Double.parseDouble(seuilVenteString) : 100.0;  // Valeur par défaut 7.0
         
         System.out.println("Mois : " + mois);
         System.out.println("Année : " + annee);
