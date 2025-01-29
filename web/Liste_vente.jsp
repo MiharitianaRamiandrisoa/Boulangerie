@@ -15,7 +15,7 @@
 <body>
   <div class="container-scroller">
     <jsp:include page="partials/_navbar.jsp" />
-    
+
     <div class="container-fluid page-body-wrapper">
       <jsp:include page="partials/_sidebar.jsp" />
   
@@ -85,6 +85,7 @@
                                         <th>Date</th>
                                         <th>Produits</th>
                                         <th>Categorie</th>
+                                        <th>Prix</th>
                                         <th>Quantite</th>
                                     </tr>
                                 </thead>
@@ -100,6 +101,7 @@
                                                     <td><%= vd.getDate() %></td>
                                                     <td><%=Produit.getNomProduit(vd.getIdProduit(),null  )  %></td>
                                                     <td><%=TypeProduit.getNomById(vd.getIdType(),null  )  %></td>
+                                                    <td><%=vd.getPrix() %></td>
                                                     <td><%= vd.getQtt() %></td>
                                                 </tr>
                                                     

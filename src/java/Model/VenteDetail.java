@@ -14,7 +14,15 @@ public class VenteDetail {
     private int idVente;
     private int idType;
     private Double qtt; // Quantité vendue
+    private Double prix;
+    
+    public Double getPrix(){
+        return this.prix;
+    }
 
+    public void setPrix(Double prix){
+        this.prix= prix;
+    }
     
      public void setDate(Date date) {
         this.date = date;
