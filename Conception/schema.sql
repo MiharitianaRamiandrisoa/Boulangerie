@@ -195,3 +195,61 @@ JOIN Genre g ON ve.idGenre = g.idGenre
 WHERE EXTRACT(MONTH FROM v._date) = 01
 AND EXTRACT(YEAR FROM v._date) = 2025
 GROUP BY g.genre;
+
+
+
+SELECT
+    g.genre AS GenreVendeur,
+    SUM(total_ventes.totalVente * (
+        SELECT c.montant 
+        FROM Commission c 
+        WHERE c._date <= total_ventes.dateVente 
+        ORDER BY c._date DESC 
+        LIMIT 1
+    ) / 100) AS sommeCommission
+FROM Vente v
+JOIN (
+    -- Sélection des ventes qui dépassent le seuil
+    SELECT
+        pv.idVente,
+        SUM(pv.prix * pv.qtt) AS totalVente,
+        MAX(pv._date) AS dateVente  -- On garde la date de la vente pour la commission
+    FROM prixProduitVente pv
+    GROUP BY pv.idVente
+    HAVING SUM(pv.prix * pv.qtt) >= 100  -- Filtre des ventes supérieures au seuil
+) AS total_ventes ON v.idVente = total_ventes.idVente
+JOIN Vendeur ve ON v.idVendeur = ve.idVendeur
+JOIN Genre g ON ve.idGenre = g.idGenre
+WHERE EXTRACT(MONTH FROM v._date) = 02
+AND EXTRACT(YEAR FROM v._date) = 2024
+GROUP BY g.genre;
+
+
+ SELECT
+        g.genre AS GenreVendeur,
+        SUM(
+            CASE
+                WHEN total_ventes.totalVente >= 100
+                THEN total_ventes.totalVente * (
+                    SELECT c.montant
+                    FROM Commission c
+                    WHERE c._date <= total_ventes.dateVente
+                    ORDER BY c._date DESC
+                    LIMIT 1
+                ) / 100
+                ELSE 0
+            END
+        ) AS sommeCommission
+    FROM Vente v
+    JOIN (
+        SELECT
+            pv.idVente,
+            SUM(pv.prix * pv.qtt) AS totalVente,
+            MAX(pv._date) AS dateVente  -- Récupère la date de la vente pour la commission
+        FROM prixProduitVente pv
+        GROUP BY pv.idVente
+    ) AS total_ventes ON v.idVente = total_ventes.idVente
+    JOIN Vendeur ve ON v.idVendeur = ve.idVendeur
+    JOIN Genre g ON ve.idGenre = g.idGenre
+    WHERE 1=1
+ and  EXTRACT(YEAR FROM v._date) = ?  group by g.genre

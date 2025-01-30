@@ -15,7 +15,7 @@
             <div class="collapse" id="produit">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="ProduitController?action=listProduits">Liste des produits</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="IngredientController?action=Liste">Liste des ingrédients</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="IngredientController?action=Liste">Liste des ingrï¿½dients</a></li>
                 </ul>
             </div>
         </li>
@@ -29,8 +29,8 @@
             <div class="collapse" id="ingredient">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="ProduitController">Ajouter un produit</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="IngredientController">Ajouter un ingrédient</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="RecetteController">Création de recette</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="IngredientController">Ajouter un ingrï¿½dient</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="RecetteController">Crï¿½ation de recette</a></li>
                     <li class="nav-item"> <a class="nav-link" href="TypeController">Insertion type</a></li>
                 </ul>
             </div>
@@ -44,7 +44,7 @@
             </a>
             <div class="collapse" id="achat">
                 <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="AchatIngredientController">Achat ingrédient</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="AchatIngredientController">Achat ingredient</a></li>
                 </ul>
             </div>
         </li>
@@ -72,7 +72,7 @@
             <div class="collapse" id="stock">
                 <ul class="nav flex-column sub-menu">
                     <li class="nav-item"> <a class="nav-link" href="StockController">Produit</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="StockController?type=ingredient">Ingrédient</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="StockController?type=ingredient">Ingredient</a></li>
                 </ul>
             </div>
         </li>
@@ -105,6 +105,20 @@
         </li>
         
         <li class="nav-item">
+            <a class="nav-link" data-toggle="collapse" href="#prixProduit" aria-expanded="false" aria-controls="ui-basic">
+                <i class="fas fa-cash-register menu-icon"></i>
+                <span class="menu-title">Prix produit</span>
+                <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="prixProduit">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"> <a class="nav-link" href="PrixProduitController?action=listePrix">Historique des prix</a></li>
+                    <li class="nav-item"> <a class="nav-link" href="PrixProduitController">Nouveau prix</a></li>
+                </ul>
+            </div>
+        </li>
+
+        <li class="nav-item">
             <a class="nav-link"  href="ConseilController" method="GET" >
                 <i class="fas fa-home menu-icon"></i>
                 <span class="menu-title">Ajout Produit Conseil</span>
@@ -118,19 +132,7 @@
         </li>
         
         
-        <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#prixProduit" aria-expanded="false" aria-controls="ui-basic">
-                <i class="fas fa-cash-register menu-icon"></i>
-                <span class="menu-title">Prix produit</span>
-                <i class="menu-arrow"></i>
-            </a>
-            <div class="collapse" id="prixProduit">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"> <a class="nav-link" href="PrixProduitController?action=listePrix">Liste prix</a></li>
-                    <li class="nav-item"> <a class="nav-link" href="PrixProduitController">Insertion prix</a></li>
-                </ul>
-            </div>
-        </li>
+        
         
     </ul>
 </nav>

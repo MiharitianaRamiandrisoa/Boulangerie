@@ -33,14 +33,11 @@ public class VendeurController extends HttpServlet {
         String anneeString = request.getParameter("annee");
         String seuilVenteString = request.getParameter("seuilVente");
 
-        int mois = (moisString != null && !moisString.equals("")) ? Integer.parseInt(moisString) : 1;
-        int annee = (anneeString != null && !anneeString.equals("")) ? Integer.parseInt(anneeString) : 2025;
-        double seuilVente = (seuilVenteString != null && !seuilVenteString.equals("")) ? Double.parseDouble(seuilVenteString) : 100.0;  // Valeur par défaut 7.0
+        Integer mois = (moisString != null && !moisString.equals("")) ? Integer.parseInt(moisString) : null ;
+        Integer annee = (anneeString != null && !anneeString.equals("")) ? Integer.parseInt(anneeString) : null;
+        double seuilVente = (seuilVenteString != null && !seuilVenteString.equals("")) ? Double.parseDouble(seuilVenteString) : 200.0;  // Valeur par défaut 7.0
         
-        System.out.println("Mois : " + mois);
-        System.out.println("Année : " + annee);
-        System.out.println("Seuil des ventes : " + seuilVente);
-        
+
         try {
             // Appel à la méthode getCommission modifiée
             Map<String, Double> commissionsParGenre = Vendeur.getCommission(null, mois, annee, seuilVente);

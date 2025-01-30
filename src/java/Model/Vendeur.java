@@ -92,53 +92,61 @@ public class Vendeur {
     }
 
     public static Map<String, Double> getCommission(Connection connection, Integer mois, Integer annee,
-            double seuilVente) throws SQLException {
-        connection = (connection != null) ? connection : new PGConnect().getConnection();
-        Map<String, Double> commissionParGenre = new HashMap<>();
+        double seuilVente) throws SQLException {
 
-        if (mois == null) {
-            mois = 1;
-        }
-        if (annee == null) {
-            annee = 2025;
-        }
+    connection = (connection != null) ? connection : new PGConnect().getConnection();
+    Map<String, Double> commissionParGenre = new HashMap<>();
 
-        String query = """
+    StringBuilder query = new StringBuilder("""
+                SELECT
+                    g.genre AS GenreVendeur,
+                    SUM(
+                        CASE
+                            WHEN total_ventes.totalVente >= ?
+                            THEN total_ventes.totalVente * (
+                                SELECT c.montant 
+                                FROM Commission c 
+                                WHERE c._date <= total_ventes.dateVente 
+                                ORDER BY c._date DESC 
+                                LIMIT 1
+                            ) / 100
+                            ELSE 0
+                        END
+                    ) AS sommeCommission
+                FROM Vente v
+                JOIN (
                     SELECT
-                        g.genre AS GenreVendeur,
-                        SUM(
-                            CASE
-                                WHEN total_ventes.totalVente >= ?
-                                THEN total_ventes.totalVente * (
-                                    SELECT c.montant 
-                                    FROM Commission c 
-                                    WHERE c._date <= total_ventes.dateVente 
-                                    ORDER BY c._date DESC 
-                                    LIMIT 1
-                                ) / 100
-                                ELSE 0
-                            END
-                        ) AS sommeCommission
-                    FROM Vente v
-                    JOIN (
-                        SELECT
-                            pv.idVente,
-                            SUM(pv.prix * pv.qtt) AS totalVente,
-                            MAX(pv._date) AS dateVente  -- Récupère la date de la vente pour la commission
-                        FROM prixProduitVente pv
-                        GROUP BY pv.idVente
-                    ) AS total_ventes ON v.idVente = total_ventes.idVente
-                    JOIN Vendeur ve ON v.idVendeur = ve.idVendeur
-                    JOIN Genre g ON ve.idGenre = g.idGenre
-                    WHERE EXTRACT(MONTH FROM v._date) = ?
-                    AND EXTRACT(YEAR FROM v._date) = ?
-                    GROUP BY g.genre;
-                """;
+                        pv.idVente,
+                        SUM(pv.prix * pv.qtt) AS totalVente,
+                        MAX(pv._date) AS dateVente  
+                    FROM prixProduitVente pv
+                    GROUP BY pv.idVente
+                ) AS total_ventes ON v.idVente = total_ventes.idVente
+                JOIN Vendeur ve ON v.idVendeur = ve.idVendeur
+                JOIN Genre g ON ve.idGenre = g.idGenre
+                WHERE 1=1
+            """);
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setDouble(1, seuilVente); // Seuil pour le total des ventes
-            preparedStatement.setInt(2, mois); // Mois
-            preparedStatement.setInt(3, annee); // Année
+        // Ajout des conditions dynamiques
+        if (mois != null) {
+            query.append(" AND EXTRACT(MONTH FROM v._date) = ?");
+        }
+        if (annee != null) {
+            query.append(" AND EXTRACT(YEAR FROM v._date) = ?");
+        }
+
+        query.append(" GROUP BY g.genre");
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query.toString())) {
+            int paramIndex = 1;
+            preparedStatement.setDouble(paramIndex++, seuilVente); // Seuil
+
+            if (mois != null) {
+                preparedStatement.setInt(paramIndex++, mois);
+            }
+            if (annee != null) {
+                preparedStatement.setInt(paramIndex++, annee);
+            }
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
@@ -153,5 +161,4 @@ public class Vendeur {
 
         return commissionParGenre;
     }
-
 }
